@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Error from './Error';
-const Pregunta = () => {
+const Pregunta = ({guardarPresupuesto, guardarRestante, actualizarPregunta}) => {
 
     //Defino el state
     const [cantidad, guardarCantidad] = useState(0);
@@ -23,6 +23,10 @@ const Pregunta = () => {
         
         //Si es valido puede ser que error sea true, pero pasó la validacion asi que lo pongo en false de nuevo
         guardarError(false);
+
+        guardarPresupuesto(cantidad);
+        guardarRestante(cantidad);
+        actualizarPregunta(false);
     }
     
     return ( 
