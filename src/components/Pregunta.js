@@ -1,14 +1,17 @@
 import React, { Fragment, useState } from 'react';
 import Error from './Error';
-const Pregunta = ({guardarPresupuesto, guardarRestante, actualizarPregunta}) => {
+
+const Pregunta = ({suma, guardarPresupuesto, guardarRestante, actualizarPregunta, actualizarMostrar, presupuesto}) => {
 
     //Defino el state
     const [cantidad, guardarCantidad] = useState(0);
     const [error, guardarError] = useState(false);
-
+    const [cantidadAux, actualizarAux] = useState(0);
+    
     //Funcion que lea el presupuesto
     const definirPresupuesto = (e) => {
-        guardarCantidad(parseInt(e.target.value));
+        actualizarAux(parseInt(e.target.value));
+        guardarCantidad(presupuesto + parseInt(e.target.value));
     }
 
     //Submit para definir el presupuesto
@@ -16,17 +19,26 @@ const Pregunta = ({guardarPresupuesto, guardarRestante, actualizarPregunta}) => 
         e.preventDefault();
 
         //Validando
-        if(cantidad < 1 || isNaN(cantidad)){
+        
+        if(cantidad < 0 || isNaN(cantidad) || cantidadAux === 0){
             guardarError(true);
+            actualizarMostrar(true);
             return;//Para que no continue ejecutando instrucciones
         }
         
         //Si es valido puede ser que error sea true, pero pasó la validacion asi que lo pongo en false de nuevo
         guardarError(false);
+        
+        localStorage.setItem('presupuesto',JSON.stringify(cantidad));
+        localStorage.setItem('restante',JSON.stringify(cantidad-suma));
 
-        guardarPresupuesto(cantidad);
-        guardarRestante(cantidad);
+        guardarPresupuesto( JSON.parse(localStorage.getItem('presupuesto')));
+        guardarRestante( JSON.parse(localStorage.getItem('restante')));
+        
+        
+        
         actualizarPregunta(false);
+        actualizarMostrar(false);
     }
     
     return ( 
@@ -39,17 +51,20 @@ const Pregunta = ({guardarPresupuesto, guardarRestante, actualizarPregunta}) => 
                 onSubmit={agregarPresupuesto}
             >
                 <input
-                type="number"
-                className="u-full-width"
-                placeholder="Coloca tu presupuesto"
-                onChange={definirPresupuesto} //La defino mas arriba
+                    type="number"
+                    className="u-full-width"
+                    placeholder="Coloca tu presupuesto"
+                    onChange={definirPresupuesto} //La defino mas arriba
                 />
                 <input
                     type="submit"
                     className="button-primary u-full-width"
-                    value="Definir presupuesto"
+                    value="Añadir presupuesto"
                 />
+
             </form>
+               
+            
         </Fragment>
     );
 }

@@ -2,24 +2,35 @@ import React, {useState} from 'react';
 import Error from './Error';
 import shortid from 'shortid';
 
-const Formulario = ( { guardarGasto, guardarCrearGasto } ) => {
+const Formulario = ( { guardarRestante, guardarPresupuesto, guardarGastos, guardarGasto, guardarCrearGasto, restante, actualizarMostrar } ) => {
 
     const [nombre, guardarNombre] = useState('');
     const [cantidad, guardarCantidad] = useState(0);
     const [error, guardarError] = useState(false);
+    const [errorPresupuestoRestante, guardarErrorPresupuestoRestante] = useState(false);
     
     //Cuando el usuario agregue un gasto
     const agregarGasto = e =>{
         e.preventDefault();
 
         //Validar
+
         if(cantidad < 1 || isNaN(cantidad) || nombre === ''){
             guardarError(true);
             return; 
         }
 
-        //Paso la validacion
+        //Paso la primera validacion
         guardarError(false);
+
+
+        
+        if(cantidad > restante){
+            guardarCrearGasto(false);
+            guardarErrorPresupuestoRestante(true);
+            return;
+        }
+        guardarErrorPresupuestoRestante(false);
 
         //Construir el gasto
         const gasto = {
@@ -27,11 +38,9 @@ const Formulario = ( { guardarGasto, guardarCrearGasto } ) => {
             cantidad,
             id: shortid.generate()
         }
-
-        
-        //Pasar el gasto al componente principal
         guardarGasto(gasto);
         guardarCrearGasto(true); //Lo actualizamos cuando se crea el gasto
+        
 
         //Resetear el form
         guardarNombre('');
@@ -42,11 +51,15 @@ const Formulario = ( { guardarGasto, guardarCrearGasto } ) => {
             onSubmit={agregarGasto}
         >
             <h2>Agrega tus gastos</h2>
-            {error 
+
+            {error
             ? <Error msg="Los datos ingresados no son correctos" /> 
             
-            : null
+            : (errorPresupuestoRestante ? (<Error msg="Fondos insuficientes!" /> ) :null)
             }
+
+            
+            
             <div className="campo">
                 <label>Nombre Gasto</label>
                 <input 
@@ -67,9 +80,28 @@ const Formulario = ( { guardarGasto, guardarCrearGasto } ) => {
                 /> 
                 <input
                     type="submit"
-                    className="button-primary u-full width"
+                    className="button-primary u-full-width"
                     value="Agregar Gasto"
+                    
                 />
+                <input
+                type="button"
+                className="button-primary u-full-width"
+                value="Añadir presupuesto"
+                onClick={e => {
+                    actualizarMostrar(true);
+                }}
+                />
+                <button
+                    className="boton-resetear u-full-width"
+                    onClick={e => {
+                        guardarGastos([]);
+                        guardarRestante(0);
+                        guardarPresupuesto(0);
+                        actualizarMostrar(true);
+                        localStorage.setItem('presupuesto',JSON.stringify(0));
+                    }}
+                >Resetear Gastos</button>
 
             </div>
         </form>

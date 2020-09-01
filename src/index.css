@@ -58,6 +58,13 @@ h2 {
   border: 1px solid transparent;
   border-radius: .25rem;
 }
+
+.alert-gastos {
+  color: #c44800;
+  background-color: #ffbe92;
+  border-color: #b8daff;
+}
+
 .alert-primary {
   color: #004085;
   background-color: #cce5ff;
@@ -100,4 +107,29 @@ h2 {
   background-color: #004085;
   padding: 1rem;
   color:white;
+}
+
+.boton-eliminar:hover {
+  background-color: rgba(250, 0, 0, 0.7);
+  color: white;
+}
+
+.boton-eliminar:active {
+  background-color: rgba(92, 0, 0, 0.7);
+  color: white;
+}
+
+.boton-resetear {
+  background-color: rgba(255, 10, 10, 0.8);
+  color: white;
+}
+
+.boton-resetear:hover {
+  background-color: rgba(247, 0, 0, 0.9);
+  color: white;
+}
+
+.boton-resetear:active {
+  background-color: rgb(122, 0, 0);
+  color: white;
 }
