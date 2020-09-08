@@ -1,13 +1,9 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { revisarPresupuesto } from '../helpers';
 
-const ControlPresupuesto = ( { presupuesto, gastos } ) => {
+const ControlPresupuesto = ( { suma, presupuesto } ) => {
 
-    let suma = 0;
-    gastos.map( gasto => {
-        suma += gasto.cantidad;
-        return suma;
-    });
 
     localStorage.setItem('restante',JSON.stringify(presupuesto-suma));
 
@@ -25,6 +21,11 @@ const ControlPresupuesto = ( { presupuesto, gastos } ) => {
             </div>
         </Fragment>
      );
+}
+
+ControlPresupuesto.propTypes = {
+    suma: PropTypes.number.isRequired,
+    presupuesto: PropTypes.number.isRequired
 }
  
 export default ControlPresupuesto;

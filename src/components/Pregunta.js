@@ -1,14 +1,15 @@
 import React, { Fragment, useState } from 'react';
+import PropTypes from 'prop-types';
 import Error from './Error';
 
-const Pregunta = ({suma, guardarPresupuesto, guardarRestante, actualizarPregunta, actualizarMostrar, presupuesto}) => {
+const Pregunta = ({suma, actualizarPregunta, guardarPresupuesto, guardarRestante, presupuesto}) => {
 
-    //Defino el state
-    const [cantidad, guardarCantidad] = useState(0);
-    const [error, guardarError] = useState(false);
-    const [cantidadAux, actualizarAux] = useState(0);
+    //Defino los states a utilizar
+    const [cantidad, guardarCantidad] = useState(0); //State que acumula el valor tipeado por el usuario sumado al saldo preexistente
+    const [cantidadAux, actualizarAux] = useState(0); //State que acumula SOLO el valor tipeado por el usuario
+    const [error, guardarError] = useState(false); //State para denegar un ingreso invalido de datos
     
-    //Funcion que lea el presupuesto
+    //Funcion que lee el presupuesto a medida que se tipea
     const definirPresupuesto = (e) => {
         actualizarAux(parseInt(e.target.value));
         guardarCantidad(presupuesto + parseInt(e.target.value));
@@ -18,27 +19,37 @@ const Pregunta = ({suma, guardarPresupuesto, guardarRestante, actualizarPregunta
     const agregarPresupuesto = e => {
         e.preventDefault();
 
-        //Validando
-        
-        if(cantidad < 0 || isNaN(cantidad) || cantidadAux === 0){
-            guardarError(true);
-            actualizarMostrar(true);
+        /*
+        Validacion: 
+        Necesito saber si el valor tipeado sumado al saldo preexistente es positivo,
+        pero tambien me interesa saber si el valor tipeado en si mismo es positivo, 
+        ya que sino se restaría al presupuesto preexistente. 
+        */
+        if(cantidad <= 0 || isNaN(cantidad) || cantidadAux <= 0 ){
+            guardarError(true); //Actualizo el state de error para mostrar un componente condicional <Error />
             return;//Para que no continue ejecutando instrucciones
         }
         
-        //Si es valido puede ser que error sea true, pero pasó la validacion asi que lo pongo en false de nuevo
+        //Si se pasa la validación, seteo en false el error (ya puede quedar en true de un error anterior).
         guardarError(false);
         
+        /*
+        Guardo en localStorage la cantidad actualizada ingresada por el usuario 
+        y su correspondiente saldo restante.
+        */
         localStorage.setItem('presupuesto',JSON.stringify(cantidad));
         localStorage.setItem('restante',JSON.stringify(cantidad-suma));
-
+        
+        // Actualizo el State "presupuesto" con lo que se haya seteado en localStorage
         guardarPresupuesto( JSON.parse(localStorage.getItem('presupuesto')));
         guardarRestante( JSON.parse(localStorage.getItem('restante')));
         
-        
-        
+        /*
+        Seteo en false el valor logico de "mostrarpregunta"
+        ya que luego de guardar/actualizar el presupuesto, necesito mostrar el componente <Formulario />
+        */ 
         actualizarPregunta(false);
-        actualizarMostrar(false);
+        
     }
     
     return ( 
@@ -54,7 +65,7 @@ const Pregunta = ({suma, guardarPresupuesto, guardarRestante, actualizarPregunta
                     type="number"
                     className="u-full-width"
                     placeholder="Coloca tu presupuesto"
-                    onChange={definirPresupuesto} //La defino mas arriba
+                    onChange={definirPresupuesto}
                 />
                 <input
                     type="submit"
@@ -67,6 +78,14 @@ const Pregunta = ({suma, guardarPresupuesto, guardarRestante, actualizarPregunta
             
         </Fragment>
     );
+}
+
+Pregunta.propTypes = {
+    suma: PropTypes.number.isRequired,
+    actualizarPregunta: PropTypes.func.isRequired,
+    guardarPresupuesto: PropTypes.func.isRequired,
+    guardarRestante: PropTypes.func.isRequired,
+    presupuesto: PropTypes.number.isRequired
 }
  
 export default Pregunta;

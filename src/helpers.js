@@ -1,3 +1,4 @@
+//Funcion que determina la clase a mostrar dependiendo del saldo restante
 export const revisarPresupuesto = (presupuesto, restante) => {
     let clase;
 

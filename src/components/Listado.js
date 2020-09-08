@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Gasto from './Gasto';
 
 const Listado = ({ gastos, guardarGastos, guardarRestante, restante}) => {
@@ -9,7 +10,7 @@ const Listado = ({ gastos, guardarGastos, guardarRestante, restante}) => {
             <h2>Listado</h2>
             {gastos.map(gasto=>{
             
-                return(
+                return( //Devuelvo un componente por iteracion
                     <Gasto
                         key={gasto.id}
                         gasto={gasto}
@@ -23,5 +24,11 @@ const Listado = ({ gastos, guardarGastos, guardarRestante, restante}) => {
     );
 }
 
+Listado.propTypes = {
+    gastos: PropTypes.array.isRequired,
+    guardarGastos: PropTypes.func.isRequired,
+    guardarRestante: PropTypes.func.isRequired,
+    restante: PropTypes.number.isRequired
+}
  
 export default Listado;
